@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "name": "Shaurya",
+      "email": "shauryasharma999000@gmail.com",
+      "password": "$2b$10$nP9azFwQ65FoGLLSNpEgue8UiaTwaLUyjalDwmDxG4Qlj1wSt5ORm",
+      "plan": "pro",
+      "registeredAt": "2026-05-05T18:57:57.140Z",
+      "totalCompressed": 1,
+      "totalSaved": -5191,
+      "proUntil": "2026-05-12T19:20:28.293Z",
+      "lastPayment": "2026-05-05T19:20:28.293Z",
+      "lastPaymentAmount": 9,
+      "paymentId": "PAY1778008828288",
+      "orderId": "ORDER1778008801391"
+    }
+  ]
+}

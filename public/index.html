@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <title>Pixeloid - Free Image Tool | ₹9/week PRO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+</head>
+<body>
+    <div class="bg"></div>
+
+    <header>
+        <div class="logo" onclick="location.reload()">
+            <span class="logo-icon">🖼️</span>
+            <span class="logo-text">Pixeloid</span>
+        </div>
+        <div class="header-actions" id="header-actions">
+            <button class="btn-xs prim" onclick="showModal('login-modal')">Login</button>
+            <button class="btn-xs outl" onclick="showModal('register-modal')">Sign Up</button>
+            <button class="btn-xs outl" onclick="showModal('pricing-modal')">💎 Plans</button>
+        </div>
+        <div class="header-user" id="header-user" style="display:none;">
+            <span id="user-badge" class="user-badge"></span>
+            <button class="btn-xs outl" onclick="showModal('pricing-modal')">💎 Upgrade</button>
+            <button class="btn-xs outl" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <div id="hero-section">
+        <div class="hero">
+            <h1>Free Online Image Tool</h1>
+            <p>Compress • Crop • Remove BG • Remove Watermark</p>
+            <div class="price-tag">🆓 Free Plan | 💎 PRO ₹9/week</div>
+            <button class="btn prim hero-btn" onclick="showModal('register-modal')">Get Started Free 🚀</button>
+        </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div id="tools-section" style="display:none;">
+        <nav class="tools-nav">
+            <button class="tool-btn active" onclick="switchTool('compress')">📦 Compress</button>
+            <button class="tool-btn" onclick="switchTool('crop')">✂️ Crop</button>
+            <button class="tool-btn" onclick="switchTool('bgremove')">🎨 Remove BG</button>
+            <button class="tool-btn" onclick="switchTool('watermark')">💧 Remove WM</button>
+            <button class="tool-btn" onclick="switchTool('social')">📱 Social</button>
+        </nav>
+
+        <main>
+            <!-- COMPRESS -->
+            <div id="tool-compress" class="tool-panel active">
+                <div class="upload-card" id="compress-upload">
+                    <input type="file" id="compress-input" accept="image/*" onchange="handleCompress(this.files[0])" hidden>
+                    <div class="drop-zone" onclick="document.getElementById('compress-input').click()">
+                        <span class="icon">📁</span>
+                        <h3>Drop Image or Tap</h3>
+                        <p id="compress-info"></p>
+                    </div>
+                </div>
+                <div id="compress-editor" style="display:none;">
+                    <div class="preview"><img id="compress-img"></div>
+                    <div class="controls">
+                        <label>Quality: <b id="cq-val">80%</b></label>
+                        <input type="range" id="cq" min="10" max="100" value="80" oninput="document.getElementById('cq-val').textContent=this.value+'%'">
+                        <select id="cformat" class="inp"><option value="jpeg">JPEG</option><option value="png">PNG</option><option value="webp">WebP</option></select>
+                        <div class="row"><input type="number" id="cw" placeholder="Width" class="inp"><input type="number" id="ch" placeholder="Height" class="inp"></div>
+                    </div>
+                    <div class="result-row"><span id="corig">0 KB</span> → <span id="ccomp">0 KB</span> <b id="csaved" style="color:#48bb78;">0%</b></div>
+                    <button class="btn prim" onclick="processCompress()">Compress 🔽</button>
+                    <button class="btn succ" id="compress-dl" style="display:none;" onclick="downloadCompress()">Download ⬇️</button>
+                </div>
+            </div>
+
+            <!-- CROP -->
+            <div id="tool-crop" class="tool-panel">
+                <div class="upload-card" id="crop-upload">
+                    <input type="file" id="crop-input" accept="image/*" onchange="handleCrop(this.files[0])" hidden>
+                    <div class="drop-zone" onclick="document.getElementById('crop-input').click()">📷<h3>Upload to Crop</h3></div>
+                </div>
+                <div id="crop-editor" style="display:none;">
+                    <div class="crop-box"><img id="crop-img"></div>
+                    <div class="row gap"><button class="btn prim" onclick="doCrop()">Crop ✂️</button><button class="btn outl" onclick="resetCrop()">Reset</button></div>
+                    <button class="btn succ" id="crop-dl" style="display:none;" onclick="downloadCrop()">Download ⬇️</button>
+                </div>
+            </div>
+
+            <!-- BG REMOVER -->
+            <div id="tool-bgremove" class="tool-panel">
+                <div class="upload-card" id="bg-upload">
+                    <input type="file" id="bg-input" accept="image/*" onchange="handleBG(this.files[0])" hidden>
+                    <div class="drop-zone" onclick="document.getElementById('bg-input').click()">🎨<h3>Remove Background</h3></div>
+                    <p id="bg-info"></p>
+                </div>
+                <div id="bg-editor" style="display:none;">
+                    <div class="preview"><img id="bg-img"></div>
+                    <button class="btn prim" onclick="removeBG()">Remove Background 🎨</button>
+                    <button class="btn succ" id="bg-dl" style="display:none;" onclick="downloadBG()">Download ⬇️</button>
+                </div>
+            </div>
+
+            <!-- WM REMOVER -->
+            <div id="tool-watermark" class="tool-panel">
+                <div class="upload-card" id="wm-upload">
+                    <input type="file" id="wm-input" accept="image/*" onchange="handleWM(this.files[0])" hidden>
+                    <div class="drop-zone" onclick="document.getElementById('wm-input').click()">💧<h3>Remove Watermark</h3></div>
+                    <p id="wm-info"></p>
+                </div>
+                <div id="wm-editor" style="display:none;">
+                    <div class="preview"><img id="wm-img"></div>
+                    <button class="btn prim" onclick="removeWM()">Remove Watermark 💧</button>
+                    <button class="btn succ" id="wm-dl" style="display:none;" onclick="downloadWM()">Download ⬇️</button>
+                </div>
+            </div>
+
+            <!-- SOCIAL -->
+            <div id="tool-social" class="tool-panel">
+                <div class="upload-card" id="social-upload">
+                    <input type="file" id="social-input" accept="image/*" onchange="handleSocial(this.files[0])" hidden>
+                    <div class="drop-zone" onclick="document.getElementById('social-input').click()">📱<h3>Social Media Resize</h3></div>
+                </div>
+                <div id="social-editor" style="display:none;">
+                    <div class="preview"><img id="social-img"></div>
+                    <select id="soc-tpl" class="inp" onchange="setSocial()"><option value="">Custom</option><option value="1080,1080">Instagram Post</option><option value="1080,1920">Instagram Story</option><option value="1280,720">YouTube Thumbnail</option></select>
+                    <div class="row"><input type="number" id="sw" placeholder="W" class="inp"><input type="number" id="sh" placeholder="H" class="inp"></div>
+                    <button class="btn prim" onclick="processSocial()">Resize 📱</button>
+                    <button class="btn succ" id="social-dl" style="display:none;" onclick="downloadSocial()">Download ⬇️</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PRICING MODAL -->
+    <div class="modal" id="pricing-modal">
+        <div class="modal-content pricing-content">
+            <span class="close" onclick="hideModal('pricing-modal')">&times;</span>
+            <h2>💎 Choose Your Plan</h2>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>🆓 Free</h3>
+                    <p class="plan-price">₹0</p>
+                    <ul>
+                        <li>✅ Image Compression</li>
+                        <li>✅ Crop Tool</li>
+                        <li>✅ Basic BG Remover</li>
+                        <li>✅ Basic WM Remover</li>
+                        <li>✅ Social Templates</li>
+                        <li>⚠️ 10/day limit</li>
+                    </ul>
+                    <button class="btn outl" onclick="hideModal('pricing-modal')">Continue Free</button>
+                </div>
+                <div class="plan-card pro-card">
+                    <div class="pro-ribbon">BEST VALUE</div>
+                    <h3>💎 PRO</h3>
+                    <p class="plan-price">₹9<span>/week</span></p>
+                    <ul>
+                        <li>✅ Everything in Free</li>
+                        <li>✅ Unlimited Usage</li>
+                        <li>✅ Max Quality (100%)</li>
+                        <li>✅ Advanced BG Remover</li>
+                        <li>✅ Advanced WM Remover</li>
+                        <li>✅ 50MB File Size</li>
+                        <li>✅ Priority Processing</li>
+                    </ul>
+                    <button class="btn prim" onclick="startPayment()">Upgrade to PRO 🚀</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <div class="modal" id="payment-modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('payment-modal')">&times;</span>
+            <h2>💳 Complete Payment</h2>
+            <p style="text-align:center;">Amount: <b>₹9</b> for 1 week</p>
+            <div id="payment-content">
+                <div style="text-align:center;padding:20px;">
+                    <div class="spin"></div>
+                    <p>Creating payment link...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTH MODALS -->
+    <div class="modal" id="login-modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('login-modal')">&times;</span>
+            <h2>Login</h2>
+            <input type="email" id="login-email" placeholder="Email" class="inp">
+            <input type="password" id="login-pass" placeholder="Password" class="inp">
+            <button class="btn prim" onclick="login()">Login</button>
+            <div class="divider"><span>or</span></div>
+            <button class="btn google-btn" onclick="googleLogin()">G Continue with Google</button>
+            <p class="link"><a href="#" onclick="hideModal('login-modal');showModal('register-modal')">Create Account</a></p>
+        </div>
+    </div>
+
+    <div class="modal" id="register-modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideModal('register-modal')">&times;</span>
+            <h2>Create Free Account</h2>
+            <p style="text-align:center;color:#48bb78;">🆓 3 Days All Features Unlocked</p>
+            <input type="text" id="reg-name" placeholder="Full Name" class="inp">
+            <input type="email" id="reg-email" placeholder="Email" class="inp">
+            <input type="password" id="reg-pass" placeholder="Password (6+ chars)" class="inp">
+            <button class="btn prim" onclick="register()">Create Free Account 🚀</button>
+            <div class="divider"><span>or</span></div>
+            <button class="btn google-btn" onclick="googleLogin()">G Continue with Google</button>
+            <p class="link"><a href="#" onclick="hideModal('register-modal');showModal('login-modal')">Already have account?</a></p>
+        </div>
+    </div>
+
+    <div id="loader" style="display:none;"><div class="spin"></div></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
